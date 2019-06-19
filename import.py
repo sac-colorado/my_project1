@@ -9,6 +9,7 @@ db = scoped_session(sessionmaker(bind=engine))
 
 def main():
     my_file = open("books.csv")
+    # csv is a python module for reading csv files
     reader = csv.reader(my_file)
     for isbn, title, author, year in reader:
         year =  int(year)           # Convert year string to an integer

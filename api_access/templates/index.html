@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">                                                                                   
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">                                   
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">                                                    
+                                                                                                                                                                                                             
+                                                                                                              
+<!-- added bootstrap cdn -->                                                                            
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" \
+  integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">                                                                                                           
+
+<!-- My css file -->                                                                                         
+        <link rel="stylesheet" type="text/css" href =  "{{ url_for('static',filename='style.css') }}">
+        <title>My Website!</title>
+    </head>
+    <body>
+        <br>
+        <h1>Your Requested Book Info</h1>
+        
+<!-- book_data is a list that consists of a tuple (isbn, title, author, year)
+if query_empty == True then the query came back with 0 rows. No database entry found. -->
+        <div id="book_info">
+        {% if query_empty == True %}
+            <br>
+            <h2> Error 404 -- isbn NOT FOUND -- please try again! </h2>
+        {% else %}
+            {% for book in book_data %}
+                <p>
+                <br>
+                {
+                <br>
+                &emsp;"title": &ensp;&ensp;&emsp;&emsp; "{{ book[1] }}",
+                <br>
+                &emsp;"author": &ensp;&emsp;&ensp; "{{ book[2] }}",
+                <br>
+                &emsp;"year": &emsp;&emsp;&emsp; "{{ book[3] }}",
+                <br>
+                &emsp;"isbn": &emsp;&emsp;&emsp; "{{ book[0] }}",
+                <br>
+                }
+                <br>
+                </p>
+            {% endfor %}
+        {% endif %}
+        </div>      
+    </body>
+</html>

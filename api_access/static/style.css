@@ -1,0 +1,14 @@
+h1 {
+    text-align: center;
+    color: blue;
+}
+
+h2 {
+    text-align: center;
+    color: red;
+}
+
+#book_info {
+    padding-left: 50px;
+    color: black;
+}

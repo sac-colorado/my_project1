@@ -15,9 +15,8 @@ db = scoped_session(sessionmaker(bind=engine))
 @app.route("/api/<string:book_isbn>")
 def index(book_isbn):
     book_data = db.execute("SELECT isbn, title, author, year FROM book_info WHERE isbn=(:book_isbn)",{"book_isbn": book_isbn}).fetchall()      
-    empty_list = []
     empty = False
-    if book_data == empty_list:    #Check if the query found a result or not in your database
+    if book_data == []: #Check if the query found a result or not in your database
         empty = True
         return render_template("index.html", book_data=book_data, query_empty=empty)
     else:

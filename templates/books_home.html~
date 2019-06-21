@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    
+
+<!-- added bootstrap cdn -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous"> 
+
+<!-- My css file -->
+    <link rel="stylesheet" type="text/css" href="sean's_website.css">
+
+    <title>Home</title>
+
+</head>
+
+<body id="home">
+    <div>                                                                                                 
+        <h1 class="page_title"> Sean Chapin</h1>                                                                     
+    </div>
+
+    <div class="container">
+<!-- Add a bootstrap navbar that links all four web pages to one another -->  
+            <nav class="navbar navbar-expand-lg navbar-light">
+             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="nav justify-content-center collapse navbar-collapse" id="navbarNavAltMarkup">
+                <div class="navbar-nav">
+                <a class="nav-item nav-link active" href="sean's_home_webpage.html">Home <span class="sr-only">(current)</span></a>
+                <a class="nav-item nav-link" href="sean's_professional_career.html">Career</a>
+                <a class="nav-item nav-link" href="sean's_interests_webpage.html">Interests</a>
+                <a class="nav-item nav-link" href="sean's_retirement.html">Retirement</a>
+                </div>
+            </div>
+            </nav> 
+    </div>
+
+    <!-- Bootstrap Grid - 3 column grid on my home page -->
+    <div class="container main_home_grid">
+        <div class="row">
+            <div class="col-sm-4 my_home_grid">
+                <a class="my_link" href="sean's_professional_career.html">Sean's Career</a>
+                <p class="home_info_paragraph">
+                Sean graduated in the spring of 1985, from the University of Minnesota, with a 
+                degree in Electrical Engineering. He worked as a VLSI CPU design engineer and 
+                in many management positions leading CPU design projects throughout his career.
+                </p>
+            </div>
+            <div class="col-sm-4 my_home_grid">
+                <a class="my_link" href="sean's_interests_webpage.html">His Interests</a>
+                <ul class="list_of_interests">
+                    <li> Hobby Electronics </li>
+                    <li> Woodworking </li>
+                    <li> Continuous learning through edX and Udemy. </li>
+                    <li> Biking </li>
+                    <li> Hiking </li>
+                    <li> Skiing (backcountry and downhill). </li>
+                </ul>
+            </div>
+            <div class="col-sm-4 my_home_grid">
+                <a class="my_link" href="sean's_retirement.html">Retirement</a>
+                <p class="home_info_paragraph"> 
+                He retired in 2014 and his time is divided between: Trying to keep up with all his interests 
+                as well as voluteering for the US Forest Service - Nordic Ranger program in Colorado, RVing
+                 with "the love of his life" - of 40 years, and being a Grandpa to his 3 year old "awesome" Granddaughter.
+                </p>
+            </div>
+        </div>                              
+
+<!-- Add the following scripts for bootstrap - Some of bootstraps components require
+ JavaScript to function -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+</body>
+</html>

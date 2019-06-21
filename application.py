@@ -11,16 +11,22 @@ def index():
 def home_page():
     return render_template("books_home.html")
 
-@app.route("/Sign_in", methods=["POST"])
-def login():
+@app.route("/Sign_in", methods=["GET"])
+def goto_login():
     user_name = request.form.get("user_name")
     password = request.form.get("password")
     return render_template("login.html", user_name=user_name, password=password)
 
-"""@app.route("/login", methods=["GET, POST"])
-def login():
-   # user_name = request.form.get("user_name")
-   # password = request.form.get("password")
-    return render_template("books_home.html")
-   # return render_template("books_home.html", user_name=user_name, password=password)"""
+@app.route("/register", methods=["GET"])
+def register():
+    user_name = request.form.get("user_name")
+    password = request.form.get("password")
+    return render_template("register.html", user_name=user_name, password=password)
+
+@app.route("/output_user_info", methods=["POST"])
+def output_user_info():
+    user_name = request.form.get("user_name")
+    password = request.form.get("password")
+    return render_template("test.html", user_name=user_name, password=password)
+
 

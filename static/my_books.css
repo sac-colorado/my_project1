@@ -19,6 +19,17 @@ inheritance are documented when used below. */
   padding-left: 20px;
   font-size: 150%; }
 
+#login_form {
+  padding-top: 25px;
+  padding-left: 150px;
+  padding-right: 150px; }
+
+#register {
+  font-size: 250%;
+  text-align: center;
+  color: green;
+  padding-top: 100px; }
+
 h1 {
   font-size: 450%;
   color: green;

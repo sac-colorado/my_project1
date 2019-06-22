@@ -14,8 +14,7 @@ engine = create_engine(os.getenv("DATABASE_URL"))
 db = scoped_session(sessionmaker(bind=engine))
 
 # Home page of My_Books_Club -- Register, Sign-in, etc.
-
-@app.route("/bookworm", methods=["GET"])
+@app.route("/", methods=["GET"])
 def home_page():
     return render_template("books_home.html")
 
@@ -27,7 +26,7 @@ def goto_login():
 def register():
     return render_template("register.html")
 
-#To register a new user --> need to check the user name is available    
+#To register a new user --> need to check that the user name is available    
 @app.route("/save_user_info", methods=["POST"])
 def save_user_info():
     book_user = request.form.get("user_name")
@@ -36,17 +35,19 @@ def save_user_info():
     if user_data ==[]:       #New user is not in the database so add them.
         db.execute("INSERT INTO book_users (user_name, password) VALUES (:user_name, :password)", {"user_name": book_user, "password": password})
         db.commit()
-        return render_template("test.html", user_name="Thank you, " + book_user + " -- Welcome to The Book Worm!")
+        return render_template("output.html", user_name="Thank you, " + book_user + " -- Welcome to The Book Worm!")
     else:             #That user name already exists in the database -- try again.
-        return render_template("test.html", user_name="That user name is all ready taken please try to register with a different user_name")
+        return render_template("output.html", user_name="That user name is all ready taken please try to register with a different user_name")
 
-
-""" @app.route("/output_user_info", methods=["POST"])
-def output_user_info():
-    book_user = request.form.get("user_name")
-    password = request.form.get("password")
-    user_data = db.execute("SELECT * FROM book_users WHERE user_name=(:book_user)",{"book_user": book_user}).fetchall()
-    if user_data ==[]:
-        return render_template("test.html", user_name="Not a registered User", password=password)
+@app.route("/api/<string:book_isbn>")
+def index(book_isbn):
+    book_data = db.execute("SELECT isbn, title, author, year FROM book_info WHERE isbn=(:book_isbn)",{"book_isbn": book_isbn}).fetchall()      
+    empty = False
+    if book_data == []: #Check if the query found a result or not in your database
+        empty = True
+        return render_template("index.html", book_data=book_data, query_empty=empty)
     else:
-        return render_template("test.html", user_name=user_data[0][1], password=password) """
+        res = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": "1v1ZUGkCBeNqhLjfcFeaA", "isbns": book_isbn})
+        reviews_count = res.json()['books'][0]['work_ratings_count']
+        average_rating = res.json()['books'][0]['average_rating']
+        return render_template("index.html", book_data=book_data, query_empty=empty, average_rating=average_rating, reviews_count=reviews_count)

@@ -43,6 +43,19 @@ h1 {
   color: green;
   text-align: center; }
 
+#h1_api {
+  font-size: 300%;
+  text-align: center;
+  color: blue; }
+
+#h2_api {
+  text-align: center;
+  color: red; }
+
+#api_book_info {
+  padding-left: 50px;
+  color: black; }
+
 /* Home page background picture and formatting info */
 #home {
   background-image: url("https://spsy6.files.wordpress.com/2015/09/bookworm.jpg");

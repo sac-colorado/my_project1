@@ -34,11 +34,20 @@ $table_border_color: black;
     padding-right: 150px;
 }
 
-#register {
+#register, #sign_in {
     font-size: 250%;
     text-align: center;
     color: green;
     padding-top: 100px;
+}
+
+#registration_note {
+    font-size: 225%;
+    text-align: center;
+    color: blue;
+    padding-top: 100px; 
+    padding-left: 200px;
+    padding-right: 200px;
 }
 
 h1 {

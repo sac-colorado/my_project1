@@ -28,17 +28,19 @@ $table_border_color: black;
     font-size: 150%;
 }
 
-#login_form, #register_form, #search_form{
+#login_form, #register_form, #search_form {
     padding-top: 25px;
     padding-left: 150px;
     padding-right: 150px;
 }
 
-#register, #sign_in {
+#register, #sign_in, #search {
     font-size: 250%;
     text-align: center;
     color: green;
-    padding-top: 100px;
+    padding-top: 50px;
+    padding-left: 100px;
+    padding-right: 100px;
 }
 
 #registration_note {
@@ -62,6 +64,11 @@ h1 {
     padding-top: 50px;
 }
 
+#api_book_info {
+    padding-top: 25px;
+    margin-left: 200px;
+}
+
 #h1_api {
     font-size: 300%;
     text-align: center;
@@ -76,6 +83,13 @@ h1 {
 #api_book_info {
     padding-left: 50px;
     color: black;
+}
+
+.list-group {
+    padding-top: 25px;
+    padding-left: 125px;
+    padding-right: 125px;
+    font-size: 125%;
 }
 
 /* Home page background picture and formatting info */

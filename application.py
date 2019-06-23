@@ -39,7 +39,8 @@ def sign_out():
 def register():
     return render_template("register.html")
 
-#To register a new user --> need to check that the user name is available    
+#To register a new user --> need to check that the user name is available a--> then save
+# the login and hashed password to the database   
 @app.route("/save_user_info", methods=["POST"])
 def save_user_info():
     book_user = request.form.get("user_name")
@@ -48,11 +49,11 @@ def save_user_info():
     if user_data == []:       #New user is not in the database so add them.
         db.execute("INSERT INTO book_users (user_name, password) VALUES (:user_name, :password)", {"user_name": book_user, "password": encryped_password})
         db.commit()
-        return render_template("output.html", user_message="Thank you, " + book_user + " -- Welcome to The Book Worm! You're now registered. \n Please sign-in!", sign_in = True)
+        return render_template("output.html", user_message="Thank you, " + book_user + " -- Welcome to The Book Worm! You're now registered. \n Please sign-in!", registration = True)
     else:             #That user name already exists in the database -- try again.
-        return render_template("output.html", user_message="That user name is all ready taken please try to register with a different user_name", sign_in = False)
+        return render_template("output.html", user_message="That user name is all ready taken please try to register with a different user_name", registration = False)
 
-#To Sign-in a user --> need to check that the user name and encryped password match in the database   
+#To Sign-in a user --> need to check that the user name and encryped password match the database   
 @app.route("/user_login", methods=["POST"])
 def user_login():
     if request.method == 'POST':
@@ -65,11 +66,24 @@ def user_login():
     if (user_data != [] and sha256_crypt.verify(request.form.get("password"), user_data[0][2])):      
         return render_template("book_search.html", user_name=book_user)
     else:       #That user name already exists in the database -- try again.
-        return render_template("output.html", user_name="Not a valid user_name and password --please try again")
-               
-        
+        return render_template("output.html", user_message="Not a valid user_name or password --please try again", sign_in = False )
 
-@app.route("/api/<string:book_isbn>")
+# A route that makes a GET request to the website and returns a JSON respone containing book 
+ # information.                   
+@app.route("/book_search", methods=["POST"])
+def book_search():
+    find_book =request.form.get("find_book")
+    find_book = "%" + find_book + "%"
+    book_data = db.execute("SELECT * FROM book_info WHERE isbn ILIKE (:find_book) OR title ILIKE (:find_book) OR author ILIKE (:find_book) ORDER BY title",{"find_book": find_book}).fetchall()
+    #book_data = db.execute("SELECT isbn, title, author FROM book_info WHERE isbn=(:book_isbn)", {"book_isbn": find_book}).fetchall()
+    if book_data == []: #Check if the query found a result or not in your database
+        return render_template("output.html", user_message="Check your spelling and try again or the book isn't in the database")
+    else:
+        return render_template("output.html", book_data=book_data, book_search=True)
+
+ # A route that makes a GET request to the website and returns a JSON respone containing book 
+ # information.                   
+@app.route("/api/<string:book_isbn>", methods=["GET"])
 def index(book_isbn):
     book_data = db.execute("SELECT isbn, title, author, year FROM book_info WHERE isbn=(:book_isbn)",{"book_isbn": book_isbn}).fetchall()      
     empty = False

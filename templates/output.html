@@ -12,10 +12,20 @@
     <link rel="stylesheet" type="text/css" href="../static/my_books.css">
 
 
-    <title>Testing</title>
+    <title>Output</title>
 </head>
 <body>
-    <h1 id="registration_note">{{ user_name }}</h1>
-    <h1>{{ password }}</h1>
+    <h2 id="registration_note">{{ user_message }}</h2>
+
+    {% if  sign_in == True %}
+        <div id="sign_in_button">
+            <a class="btn btn-primary" href="{{ url_for('goto_login') }}" role="button">Sign_in</a>
+        </div>
+    {% else %}
+        <div id="sign_in_button">
+            <a class="btn btn-primary" href="{{ url_for('register') }}" role="button">Try Again</a>
+        </div>
+    {% endif %}
+
  </body>
 </html>

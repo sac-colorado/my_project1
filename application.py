@@ -43,16 +43,14 @@ def register():
 @app.route("/save_user_info", methods=["POST"])
 def save_user_info():
     book_user = request.form.get("user_name")
-    encryped_password = sha256_crypt.encrypt(request.form.get("password"))
-    name_available = True
+    encryped_password = sha256_crypt.encrypt(request.form.get("password")) # Encrypt the password
     user_data = db.execute("SELECT user_name FROM book_users WHERE user_name=(:book_user)",{"book_user": book_user}).fetchall()
     if user_data == []:       #New user is not in the database so add them.
         db.execute("INSERT INTO book_users (user_name, password) VALUES (:user_name, :password)", {"user_name": book_user, "password": encryped_password})
         db.commit()
-        return render_template("output.html", user_name="Thank you, " + book_user + " -- Welcome to The Book Worm!")
+        return render_template("output.html", user_message="Thank you, " + book_user + " -- Welcome to The Book Worm! You're now registered. \n Please sign-in!", sign_in = True)
     else:             #That user name already exists in the database -- try again.
-        name_available = False
-        return render_template("output.html", user_name="That user name is all ready taken please try to register with a different user_name", name_available=name_available)
+        return render_template("output.html", user_message="That user name is all ready taken please try to register with a different user_name", sign_in = False)
 
 #To Sign-in a user --> need to check that the user name and encryped password match in the database   
 @app.route("/user_login", methods=["POST"])
@@ -64,7 +62,6 @@ def user_login():
     book_user = request.form.get("user_name")
     password = request.form.get("password")
     user_data = db.execute("SELECT * FROM book_users WHERE user_name=(:book_user)",{"book_user": book_user}).fetchall()
-    #user_data = db.execute("SELECT user_name, password FROM book_users WHERE user_name='sally' AND password='123'").fetchall()
     if (user_data != [] and sha256_crypt.verify(request.form.get("password"), user_data[0][2])):      
         return render_template("book_search.html", user_name=book_user)
     else:       #That user name already exists in the database -- try again.

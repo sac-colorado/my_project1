@@ -1,6 +1,6 @@
 /*Sean Chapin "my_project1" implementation */
 /* #id and .class selectors are used throughout. sass varables and nesting along with 
-inheritance are documented when used below. */
+   inheritance are documented when used below. */
 /* Use of sass variables */
 /* SASS Inheritance implementation*/
 #home {
@@ -19,7 +19,7 @@ inheritance are documented when used below. */
   padding-left: 20px;
   font-size: 150%; }
 
-#login_form {
+#login_form, #register_form, #search_form {
   padding-top: 25px;
   padding-left: 150px;
   padding-right: 150px; }

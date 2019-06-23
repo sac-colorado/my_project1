@@ -1,4 +1,5 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, url_for, escape, session
+from flask_session import Session
 
 import os
 import requests
@@ -6,8 +7,15 @@ import requests
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 
+from passlib.hash import sha256_crypt
+
+
 
 app = Flask(__name__)
+
+app.config["SESSION_PERMANENT"] = True
+app.config["SESSION_TYPE"] = "filesystem"
+Session(app)
 
 # 'engine' is an object that manages connections to the SQL database
 engine = create_engine(os.getenv("DATABASE_URL"))
@@ -22,6 +30,11 @@ def home_page():
 def goto_login():
     return render_template("login.html")
 
+@app.route('/sign_out')
+def sign_out():
+    session.pop('username', None)
+    return redirect('/')
+
 @app.route("/register", methods=["GET"])
 def register():
     return render_template("register.html")
@@ -30,14 +43,34 @@ def register():
 @app.route("/save_user_info", methods=["POST"])
 def save_user_info():
     book_user = request.form.get("user_name")
-    password = request.form.get("password")
-    user_data = db.execute("SELECT * FROM book_users WHERE user_name=(:book_user)",{"book_user": book_user}).fetchall()
-    if user_data ==[]:       #New user is not in the database so add them.
-        db.execute("INSERT INTO book_users (user_name, password) VALUES (:user_name, :password)", {"user_name": book_user, "password": password})
+    encryped_password = sha256_crypt.encrypt(request.form.get("password"))
+    name_available = True
+    user_data = db.execute("SELECT user_name FROM book_users WHERE user_name=(:book_user)",{"book_user": book_user}).fetchall()
+    if user_data == []:       #New user is not in the database so add them.
+        db.execute("INSERT INTO book_users (user_name, password) VALUES (:user_name, :password)", {"user_name": book_user, "password": encryped_password})
         db.commit()
         return render_template("output.html", user_name="Thank you, " + book_user + " -- Welcome to The Book Worm!")
     else:             #That user name already exists in the database -- try again.
-        return render_template("output.html", user_name="That user name is all ready taken please try to register with a different user_name")
+        name_available = False
+        return render_template("output.html", user_name="That user name is all ready taken please try to register with a different user_name", name_available=name_available)
+
+#To Sign-in a user --> need to check that the user name and encryped password match in the database   
+@app.route("/user_login", methods=["POST"])
+def user_login():
+    if request.method == 'POST':
+        app.secret_key = 'My super secret key'
+        session['username'] = request.form['user_name']
+
+    book_user = request.form.get("user_name")
+    password = request.form.get("password")
+    user_data = db.execute("SELECT * FROM book_users WHERE user_name=(:book_user)",{"book_user": book_user}).fetchall()
+    #user_data = db.execute("SELECT user_name, password FROM book_users WHERE user_name='sally' AND password='123'").fetchall()
+    if (user_data != [] and sha256_crypt.verify(request.form.get("password"), user_data[0][2])):      
+        return render_template("book_search.html", user_name=book_user)
+    else:       #That user name already exists in the database -- try again.
+        return render_template("output.html", user_name="Not a valid user_name and password --please try again")
+               
+        
 
 @app.route("/api/<string:book_isbn>")
 def index(book_isbn):
@@ -51,3 +84,5 @@ def index(book_isbn):
         reviews_count = res.json()['books'][0]['work_ratings_count']
         average_rating = res.json()['books'][0]['average_rating']
         return render_template("index.html", book_data=book_data, query_empty=empty, average_rating=average_rating, reviews_count=reviews_count)
+
+

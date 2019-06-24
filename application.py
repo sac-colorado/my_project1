@@ -96,4 +96,19 @@ def index(book_isbn):
         average_rating = res.json()['books'][0]['average_rating']
         return render_template("index.html", book_data=book_data, query_empty=empty, average_rating=average_rating, reviews_count=reviews_count)
 
+# A route that makes a GET request to the website and returns a JSON respone containing book 
+ # information.                   
+@app.route("/book_page/<string:book_isbn>", methods=["GET"])
+def book_page(book_isbn):
+    book_data = db.execute("SELECT isbn, title, author, year FROM book_info WHERE isbn=(:book_isbn)",{"book_isbn": book_isbn}).fetchall()      
+    empty = False
+    if book_data == []: #Check if the query found a result or not in your database
+        empty = True
+        return render_template("index.html", book_data=book_data, query_empty=empty)
+    else:
+        res = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": "1v1ZUGkCBeNqhLjfcFeaA", "isbns": book_isbn})
+        reviews_count = res.json()['books'][0]['work_ratings_count']
+        average_rating = res.json()['books'][0]['average_rating']
+        return render_template("index.html", book_data=book_data, query_empty=empty, average_rating=average_rating, reviews_count=reviews_count)
+
 

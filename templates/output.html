@@ -37,7 +37,7 @@
         <h3 id="search"> Here are Your Search Results sorted by Book Title </h3>
         <div class="list-group">
         {% for book in book_data %}        
-             <a href="{{ url_for('register') }}" class="list-group-item list-group-item-action list-group-item-primary">Title: {{ book.title }}&emsp;&emsp;<br>isbn: {{ book.isbn }}&emsp;&emsp;year: {{ book.year }}&emsp;&emsp;Author: {{ book.author }}</a>            
+             <a href="/book_page/{{ book.isbn }}" class="list-group-item list-group-item-action list-group-item-primary">Title: {{ book.title }}&emsp;&emsp;<br>isbn: {{ book.isbn }}&emsp;&emsp;year: {{ book.year }}&emsp;&emsp;Author: {{ book.author }}</a> 
         {% endfor %}
         </div>
     {% endif %}

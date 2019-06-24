@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">                                                                                   
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">                                   
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">                                                    
+                                                                                                                                                                                                             
+                                                                                                              
+<!-- added bootstrap cdn -->                                                                            
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" \
+  integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">                                                                                                           
+
+<!-- My css file -->                                                                                         
+        <link rel="stylesheet" type="text/css" href = "../static/my_books.css">
+        <title>Book Page</title>
+    </head>
+    <body>
+        <br>
+        <h1 id="book_page">Book Page</h1>
+        <h1 id="h1_api">Your Requested Book Info</h1>
+        
+<!-- book_data is a list that consists of a tuple (isbn, title, author, year)
+if query_empty == True then the query came back with 0 rows. No database entry found. -->
+        <div id="api_book_info">
+            {% if query_empty == True %}
+                <br>
+                <h2 id="h2_api"> No book found -- please try again! </h2>
+            {% else %}
+                {% for book in book_data %}
+                    <p>
+                    <br>
+                    {
+                    <br>
+                    &emsp;"title": &ensp;&ensp;&ensp;&emsp;&emsp;&emsp;&emsp; "{{ book[1] }}",
+                    <br>
+                    &emsp;"author": &ensp;&ensp;&ensp;&emsp;&emsp;&emsp; "{{ book[2] }}",
+                    <br>
+                    &emsp;"year": &ensp;&emsp;&emsp;&emsp;&emsp;&emsp; "{{ book[3] }}",
+                    <br>
+                    &emsp;"isbn": &ensp;&emsp;&emsp;&emsp;&emsp;&emsp; "{{ book[0] }}",
+                    <br>
+                    &emsp;"review_count": &ensp;&emsp; {{ reviews_count }},
+                    <br>
+                    &emsp;"average_score": &emsp; {{ average_rating }}
+                    <br>
+                    }
+                    <br>
+                    </p>
+                {% endfor %}
+            {% endif %}
+        </div>      
+    </body>
+</html>

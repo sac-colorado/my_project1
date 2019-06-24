@@ -12,6 +12,7 @@ from passlib.hash import sha256_crypt
 
 
 app = Flask(__name__)
+app.secret_key = "Secret Key"
 
 app.config["SESSION_PERMANENT"] = True
 app.config["SESSION_TYPE"] = "filesystem"
@@ -30,9 +31,9 @@ def home_page():
 def goto_login():
     return render_template("login.html")
 
-@app.route('/sign_out')
+@app.route("/Sign_out")
 def sign_out():
-    session.pop('username', None)
+    session.pop("username", None)
     return redirect('/')
 
 @app.route("/register", methods=["GET"])
@@ -56,32 +57,40 @@ def save_user_info():
 #To Sign-in a user --> need to check that the user name and encryped password match the database   
 @app.route("/user_login", methods=["POST"])
 def user_login():
-    if request.method == 'POST':
-        app.secret_key = 'My super secret key'
-        session['username'] = request.form['user_name']
-
     book_user = request.form.get("user_name")
     password = request.form.get("password")
     user_data = db.execute("SELECT * FROM book_users WHERE user_name=(:book_user)",{"book_user": book_user}).fetchall()
-    if (user_data != [] and sha256_crypt.verify(request.form.get("password"), user_data[0][2])):      
+    if (user_data != [] and sha256_crypt.verify(request.form.get("password"), user_data[0][2])): 
+        session["username"] = book_user
         return render_template("book_search.html", user_name=book_user)
     else:       #That user name already exists in the database -- try again.
         return render_template("output.html", user_message="Not a valid user_name or password --please try again", sign_in = False )
 
 # A route that makes a GET request to the website and returns a JSON respone containing book 
  # information.                   
-@app.route("/book_search", methods=["POST"])
+@app.route("/Book_search", methods=["POST"])
 def book_search():
-    find_book =request.form.get("find_book")
-    find_book = "%" + find_book + "%"
-    book_data = db.execute("SELECT * FROM book_info WHERE isbn ILIKE (:find_book) OR title ILIKE (:find_book) OR author ILIKE (:find_book) ORDER BY title",{"find_book": find_book}).fetchall()
-    #book_data = db.execute("SELECT isbn, title, author FROM book_info WHERE isbn=(:book_isbn)", {"book_isbn": find_book}).fetchall()
-    if book_data == []: #Check if the query found a result or not in your database
-        return render_template("output.html", user_message="Check your spelling and try again or the book isn't in the database")
+    if "username" in session:
+        gobacktosearch = False
+        gobacktosignin = False
+        find_book =request.form.get("find_book")
+        find_book = "%" + find_book + "%"      # add "wildcard characters" % to your query
+        book_data = db.execute("SELECT * FROM book_info WHERE isbn ILIKE (:find_book) OR title ILIKE (:find_book) OR author ILIKE (:find_book) ORDER BY title",{"find_book": find_book}).fetchall()
+        #book_data = db.execute("SELECT isbn, title, author FROM book_info WHERE isbn=(:book_isbn)", {"book_isbn": find_book}).fetchall()
+        if book_data == []: #Check if the query found a result or not in your database
+            return render_template("output.html", user_message="Check your spelling and try again or the book isn't in the database", gobacktosearch = True)
+        else:
+            return render_template("output.html", book_data=book_data, book_search=True)
     else:
-        return render_template("output.html", book_data=book_data, book_search=True)
+        return render_template("output.html", user_message="You have been signed out and need to login again", gobacktosignin=True)
 
- # A route that makes a GET request to the website and returns a JSON respone containing book 
+# If you book search failed then send user a message and give them a path ("try again") botton to return
+# to return to the book_search page.
+@app.route("/go_back_to_search", methods=["GET"])
+def go_back_to_search():
+    return render_template("book_search.html")
+    
+ # A route that makes a GET request to the website and returns a JSON response containing book 
  # information.                   
 @app.route("/api/<string:book_isbn>", methods=["GET"])
 def index(book_isbn):
@@ -96,7 +105,7 @@ def index(book_isbn):
         average_rating = res.json()['books'][0]['average_rating']
         return render_template("index.html", book_data=book_data, query_empty=empty, average_rating=average_rating, reviews_count=reviews_count)
 
-# A route that makes a GET request to the website and returns a JSON respone containing book 
+# A route that makes a GET request to the website and returns a JSON response containing book 
  # information.                   
 @app.route("/book_page/<string:book_isbn>", methods=["GET"])
 def book_page(book_isbn):
@@ -104,11 +113,11 @@ def book_page(book_isbn):
     empty = False
     if book_data == []: #Check if the query found a result or not in your database
         empty = True
-        return render_template("index.html", book_data=book_data, query_empty=empty)
+        return render_template("book_page.html", book_data=book_data, query_empty=empty)
     else:
         res = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": "1v1ZUGkCBeNqhLjfcFeaA", "isbns": book_isbn})
         reviews_count = res.json()['books'][0]['work_ratings_count']
         average_rating = res.json()['books'][0]['average_rating']
-        return render_template("index.html", book_data=book_data, query_empty=empty, average_rating=average_rating, reviews_count=reviews_count)
+        return render_template("book_page.html", book_data=book_data, query_empty=empty, average_rating=average_rating, reviews_count=reviews_count)
 
 

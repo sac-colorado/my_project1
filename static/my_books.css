@@ -24,7 +24,7 @@
   padding-left: 150px;
   padding-right: 150px; }
 
-#register, #sign_in, #search {
+#register, #sign_in, #search, #book_page {
   font-size: 250%;
   text-align: center;
   color: green;
@@ -51,20 +51,19 @@ h1 {
 
 #api_book_info {
   padding-top: 25px;
-  margin-left: 200px; }
+  padding-left: 50px;
+  margin-left: 200px;
+  color: black; }
 
 #h1_api {
-  font-size: 300%;
+  padding-top: 25px;
+  font-size: 200%;
   text-align: center;
   color: blue; }
 
 #h2_api {
   text-align: center;
   color: red; }
-
-#api_book_info {
-  padding-left: 50px;
-  color: black; }
 
 .list-group {
   padding-top: 25px;

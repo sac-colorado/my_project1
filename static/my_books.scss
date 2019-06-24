@@ -34,7 +34,7 @@ $table_border_color: black;
     padding-right: 150px;
 }
 
-#register, #sign_in, #search {
+#register, #sign_in, #search, #book_page{
     font-size: 250%;
     text-align: center;
     color: green;
@@ -59,18 +59,20 @@ h1 {
 }
 
 #sign_in_button {
-
     text-align: center;
     padding-top: 50px;
 }
 
 #api_book_info {
     padding-top: 25px;
+    padding-left: 50px;
     margin-left: 200px;
+    color: black;
 }
 
 #h1_api {
-    font-size: 300%;
+    padding-top: 25px;
+    font-size: 200%;
     text-align: center;
     color: blue;
 }
@@ -78,11 +80,6 @@ h1 {
 #h2_api {
     text-align: center;
     color: red;
-}
-
-#api_book_info {
-    padding-left: 50px;
-    color: black;
 }
 
 .list-group {

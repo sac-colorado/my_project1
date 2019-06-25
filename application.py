@@ -68,7 +68,7 @@ def save_user_info():
 
 # A route that makes a GET request to the website and returns a JSON respone containing book 
  # information.                   
-@app.route("/Book_search", methods=["POST"])
+@app.route("/Book_search", methods=["GET", "POST"])
 def book_search():
     if "username" in session:
         gobacktosearch = False
@@ -77,7 +77,6 @@ def book_search():
         find_book =request.form.get("find_book")
         find_book = "%" + find_book + "%"      # add "wildcard characters" % to your query
         book_data = db.execute("SELECT * FROM book_info WHERE isbn ILIKE (:find_book) OR title ILIKE (:find_book) OR author ILIKE (:find_book) ORDER BY title",{"find_book": find_book}).fetchall()
-        #book_data = db.execute("SELECT isbn, title, author FROM book_info WHERE isbn=(:book_isbn)", {"book_isbn": find_book}).fetchall()
         if book_data == []: #Check if the query found a result or not in your database
             return render_template("output.html", user_message="Check your spelling and try again or the book isn't in the database", gobacktosearch = True)
         else:
@@ -108,23 +107,35 @@ def book_page(book_isbn):
         book_reviews =db.execute("SELECT review FROM book_reviews WHERE isbn=(:book_isbn)", {"book_isbn": book_isbn}).fetchall()
         return render_template("book_page.html", book_data=book_data, query_empty=empty, average_rating=average_rating, reviews_count=reviews_count, book_reviews=book_reviews, reviews=True)
 
-@app.route("/Submit_review", methods=["GET", "POST"])
-def submit_review():
-    if "username" in session:
-        gobacktosearch = False
-        gobacktosignin = False
-        book_search = False
-        find_book =request.form.get("find_book")
-        find_book = "%" + find_book + "%"      # add "wildcard characters" % to your query
-        book_data = db.execute("SELECT * FROM book_info WHERE isbn ILIKE (:find_book) OR title ILIKE (:find_book) OR author ILIKE (:find_book) ORDER BY title",{"find_book": find_book}).fetchall()
-        #book_data = db.execute("SELECT isbn, title, author FROM book_info WHERE isbn=(:book_isbn)", {"book_isbn": find_book}).fetchall()
-        if book_data == []: #Check if the query found a result or not in your database
-            return render_template("output.html", user_message="Check your spelling and try again or the book isn't in the database", gobacktosearch = True)
-        else:
-            return render_template("output.html", book_data=book_data, user_message="Here are Your Search Results sorted by Book Title", book_search = True)
-    else:
-        return render_template("output.html", user_message="You have been signed out and need to login again", gobacktosignin=True)
+@app.route("/Write_review/<string:book_isbn>", methods=["GET"])
+def write_review(book_isbn):
+    book_data = db.execute("SELECT isbn, reviewer_name FROM book_reviews WHERE isbn=(:book_isbn)",{"book_isbn": book_isbn}).fetchall()
+    get_book_info = db.execute("SELECT isbn, title, author FROM book_info WHERE isbn=(:book_isbn)",{"book_isbn": book_isbn}).fetchall()
+    for book_info in get_book_info:
+        book_title = book_info.title     # Get title of book to pass to submit_review.html to use in forms name
+        book_author = book_info.author
+    for review in book_data:
+         if session["username"] == review.reviewer_name:
+            return render_template("output.html", user_message="You have already submitted a review for this book -- only one review per user")
+    return render_template("submit_review.html", book_isbn=book_isbn, book_title=book_title, book_author=book_author)
 
+@app.route("/Submit_review", methods=["POST"])
+def submit_review():
+    book_review = request.form.get("book_review")
+    book_isbn = request.form.get("book_isbn")
+    review_rating = request.form.get("book_rating")
+    reviewer_name = session["username"] 
+    # Check again to make sure the user hasn't already submitted a review for the book. This keeps
+    # a user from using the "back arrow" to go back and re-submit their review
+    book_data = db.execute("SELECT isbn, reviewer_name FROM book_reviews WHERE isbn=(:book_isbn)",{"book_isbn": book_isbn}).fetchall()
+    for review in book_data:
+         if session["username"] == review.reviewer_name:
+            return render_template("output.html", user_message="You have already submitted a review for this book -- only one review per user")
+    #db.execute("INSERT INTO test_table (review) VALUES (:review)", {"review": book_review})
+    else:
+        db.execute("INSERT INTO book_reviews (isbn, reviewer_name, review, rating) VALUES (:isbn, :reviewer_name, :review, :rating)", {"isbn": book_isbn, "reviewer_name": reviewer_name, "review": book_review, "rating": review_rating})
+        db.commit()
+        return render_template("book_search.html")
 
 # A route that makes a GET request to the website and returns a JSON response containing book 
  # information.                   

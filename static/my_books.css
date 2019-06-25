@@ -62,12 +62,32 @@ h1 {
   padding-top: 25px;
   padding-right: 25px; }
 
+#search_button {
+  text-align: center;
+  padding-top: 25px; }
+
 #submit_book_review {
   text-align: center;
   padding-top: 25px; }
 
+#submit_review {
+  padding-left: 200px;
+  padding-right: 200px; }
+
+#book_rating {
+  margin-left: 200px;
+  width: 100px;
+  height: 35px; }
+
+#isbn_review {
+  padding-left: 180px;
+  padding-right: 250px; }
+
+#textarea {
+  font-size: 150%; }
+
 #api_book_info {
-  margin: 35%;
+  margin: 30%;
   margin-top: 0px;
   margin-bottom: 0px;
   padding-top: 25px;

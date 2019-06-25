@@ -12,29 +12,22 @@
     <link rel="stylesheet" type="text/css" href="../static/my_books.css">
 
 
-    <title>Book_Search</title>
+    <title>Book_Review</title>
 </head>
 <body>
         <div id="sign_out_button">
             <a class="btn btn-primary" href="{{ url_for('sign_out') }}" role="button">Sign_out</a>
         </div>
         
-        <h3 id="sign_in"> Book_Search </h3>
-        <div id="search_form">  
-            <form action="Book_search" method="post">
-                <div class="form-group row">
-                    <label for="findabook" class="col-sm-2 col-form-label">Find a Book</label>
-                    <div class="col-sm-10">
-                    <input type="text" class="form-control" id="user_name" name="find_book" placeholder="Book input: Enter an isbn OR title OR author">
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <div class="col-sm-10">
-                    <button type="submit" class="btn btn-primary">Submit</button>
-                    </div>
-                </div>
-            </form>
-        </div>
+        <h3 id="sign_in"> Book Review </h3>
+
+
+        <form "submit_review" method="post">
+            <div class="form-group"id="submit_review">
+                <label for="book_review_iput"> Book Review </label>
+                <textarea class="form-control" id="exampleFormControlTextarea1" rows="5"></textarea>
+            </div>
+        </form>
 
           <!-- Add the following scripts for bootstrap - Some of bootstraps components require
           JavaScript to function -->

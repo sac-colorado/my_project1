@@ -20,11 +20,14 @@
         
 <!-- book_data is a list that consists of a tuple (isbn, title, author, year)
 if query_empty == True then the query came back with 0 rows. No database entry found. -->
-        <div id="api_book_info">
+        
             {% if query_empty == True %}
                 <br>
-                <h2 id="h2_api"> Error 404 -- isbn NOT FOUND -- please try again! </h2>
+                <div id="h2_api">
+                    <h2> Error 404 -- isbn NOT FOUND -- please try again! </h2>
+                </div>
             {% else %}
+        <div id="api_book_info">
                 {% for book in book_data %}
                     <p>
                     <br>

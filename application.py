@@ -10,7 +10,6 @@ from sqlalchemy.orm import scoped_session, sessionmaker
 from passlib.hash import sha256_crypt
 
 
-
 app = Flask(__name__)
 app.secret_key = "Secret Key"
 
@@ -21,6 +20,7 @@ Session(app)
 # 'engine' is an object that manages connections to the SQL database
 engine = create_engine(os.getenv("DATABASE_URL"))
 db = scoped_session(sessionmaker(bind=engine))
+
 
 # Home page of My_Books_Club -- Register, Sign-in, etc.
 @app.route("/", methods=["GET"])
@@ -40,6 +40,18 @@ def sign_out():
 def register():
     return render_template("register.html")
 
+#To Sign-in a user --> need to check that the user name and encryped password match the database   
+@app.route("/user_login", methods=["POST"])
+def user_login():
+    book_user = request.form.get("user_name")
+    password = request.form.get("password")
+    user_data = db.execute("SELECT * FROM book_users WHERE user_name=(:book_user)",{"book_user": book_user}).fetchall()
+    if (user_data != [] and sha256_crypt.verify(request.form.get("password"), user_data[0][2])): 
+        session["username"] = book_user
+        return render_template("book_search.html", user_name=book_user)
+    else:       #That user name already exists in the database -- try again.
+        return render_template("output.html", user_message="Not a valid user_name or password --please try again", sign_in = False )
+
 #To register a new user --> need to check that the user name is available a--> then save
 # the login and hashed password to the database   
 @app.route("/save_user_info", methods=["POST"])
@@ -54,18 +66,6 @@ def save_user_info():
     else:             #That user name already exists in the database -- try again.
         return render_template("output.html", user_message="That user name is all ready taken please try to register with a different user_name", registration = False)
 
-#To Sign-in a user --> need to check that the user name and encryped password match the database   
-@app.route("/user_login", methods=["POST"])
-def user_login():
-    book_user = request.form.get("user_name")
-    password = request.form.get("password")
-    user_data = db.execute("SELECT * FROM book_users WHERE user_name=(:book_user)",{"book_user": book_user}).fetchall()
-    if (user_data != [] and sha256_crypt.verify(request.form.get("password"), user_data[0][2])): 
-        session["username"] = book_user
-        return render_template("book_search.html", user_name=book_user)
-    else:       #That user name already exists in the database -- try again.
-        return render_template("output.html", user_message="Not a valid user_name or password --please try again", sign_in = False )
-
 # A route that makes a GET request to the website and returns a JSON respone containing book 
  # information.                   
 @app.route("/Book_search", methods=["POST"])
@@ -73,6 +73,7 @@ def book_search():
     if "username" in session:
         gobacktosearch = False
         gobacktosignin = False
+        book_search = False
         find_book =request.form.get("find_book")
         find_book = "%" + find_book + "%"      # add "wildcard characters" % to your query
         book_data = db.execute("SELECT * FROM book_info WHERE isbn ILIKE (:find_book) OR title ILIKE (:find_book) OR author ILIKE (:find_book) ORDER BY title",{"find_book": find_book}).fetchall()
@@ -80,7 +81,7 @@ def book_search():
         if book_data == []: #Check if the query found a result or not in your database
             return render_template("output.html", user_message="Check your spelling and try again or the book isn't in the database", gobacktosearch = True)
         else:
-            return render_template("output.html", book_data=book_data, book_search=True)
+            return render_template("output.html", book_data=book_data, user_message="Here are Your Search Results sorted by Book Title", book_search = True)
     else:
         return render_template("output.html", user_message="You have been signed out and need to login again", gobacktosignin=True)
 
@@ -89,8 +90,43 @@ def book_search():
 @app.route("/go_back_to_search", methods=["GET"])
 def go_back_to_search():
     return render_template("book_search.html")
-    
- # A route that makes a GET request to the website and returns a JSON response containing book 
+
+# A route that makes a GET request to the website and returns a JSON response containing book 
+ # information.                   
+@app.route("/book_page/<string:book_isbn>", methods=["GET"])
+def book_page(book_isbn):
+    book_data = db.execute("SELECT isbn, title, author, year FROM book_info WHERE isbn=(:book_isbn)",{"book_isbn": book_isbn}).fetchall()      
+    empty = False
+    reviews = False
+    if book_data == []: #Check if the query found a result or not in your database
+        empty = True
+        return render_template("book_page.html", book_data=book_data, query_empty=empty, review_isbn=book_isbn)
+    else:
+        res = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": "1v1ZUGkCBeNqhLjfcFeaA", "isbns": book_isbn})
+        reviews_count = res.json()['books'][0]['work_ratings_count']
+        average_rating = res.json()['books'][0]['average_rating']
+        book_reviews =db.execute("SELECT review FROM book_reviews WHERE isbn=(:book_isbn)", {"book_isbn": book_isbn}).fetchall()
+        return render_template("book_page.html", book_data=book_data, query_empty=empty, average_rating=average_rating, reviews_count=reviews_count, book_reviews=book_reviews, reviews=True)
+
+@app.route("/Submit_review", methods=["GET", "POST"])
+def submit_review():
+    if "username" in session:
+        gobacktosearch = False
+        gobacktosignin = False
+        book_search = False
+        find_book =request.form.get("find_book")
+        find_book = "%" + find_book + "%"      # add "wildcard characters" % to your query
+        book_data = db.execute("SELECT * FROM book_info WHERE isbn ILIKE (:find_book) OR title ILIKE (:find_book) OR author ILIKE (:find_book) ORDER BY title",{"find_book": find_book}).fetchall()
+        #book_data = db.execute("SELECT isbn, title, author FROM book_info WHERE isbn=(:book_isbn)", {"book_isbn": find_book}).fetchall()
+        if book_data == []: #Check if the query found a result or not in your database
+            return render_template("output.html", user_message="Check your spelling and try again or the book isn't in the database", gobacktosearch = True)
+        else:
+            return render_template("output.html", book_data=book_data, user_message="Here are Your Search Results sorted by Book Title", book_search = True)
+    else:
+        return render_template("output.html", user_message="You have been signed out and need to login again", gobacktosignin=True)
+
+
+# A route that makes a GET request to the website and returns a JSON response containing book 
  # information.                   
 @app.route("/api/<string:book_isbn>", methods=["GET"])
 def index(book_isbn):
@@ -104,20 +140,3 @@ def index(book_isbn):
         reviews_count = res.json()['books'][0]['work_ratings_count']
         average_rating = res.json()['books'][0]['average_rating']
         return render_template("index.html", book_data=book_data, query_empty=empty, average_rating=average_rating, reviews_count=reviews_count)
-
-# A route that makes a GET request to the website and returns a JSON response containing book 
- # information.                   
-@app.route("/book_page/<string:book_isbn>", methods=["GET"])
-def book_page(book_isbn):
-    book_data = db.execute("SELECT isbn, title, author, year FROM book_info WHERE isbn=(:book_isbn)",{"book_isbn": book_isbn}).fetchall()      
-    empty = False
-    if book_data == []: #Check if the query found a result or not in your database
-        empty = True
-        return render_template("book_page.html", book_data=book_data, query_empty=empty)
-    else:
-        res = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": "1v1ZUGkCBeNqhLjfcFeaA", "isbns": book_isbn})
-        reviews_count = res.json()['books'][0]['work_ratings_count']
-        average_rating = res.json()['books'][0]['average_rating']
-        return render_template("book_page.html", book_data=book_data, query_empty=empty, average_rating=average_rating, reviews_count=reviews_count)
-
-

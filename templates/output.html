@@ -15,6 +15,10 @@
     <title>Output</title>
 </head>
 <body>
+        <div id="sign_out_button">
+            <a class="btn btn-primary" href="{{ url_for('sign_out') }}" role="button">Sign_out</a>
+        </div>
+
     <h2 id="registration_note">{{ user_message }}</h2>
 
     {% if gobacktosignin == True %}
@@ -46,7 +50,6 @@
     {% endif %}
 
     {% if book_search == True %}
-        <h3 id="search"> Here are Your Search Results sorted by Book Title </h3>
         <div class="list-group">
         {% for book in book_data %}        
              <a href="/book_page/{{ book.isbn }}" class="list-group-item list-group-item-action list-group-item-primary">Title: {{ book.title }}&emsp;&emsp;<br>isbn: {{ book.isbn }}&emsp;&emsp;year: {{ book.year }}&emsp;&emsp;Author: {{ book.author }}</a> 

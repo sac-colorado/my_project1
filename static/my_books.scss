@@ -1,14 +1,5 @@
 /*Sean Chapin "my_project1" implementation */
 
-/* #id and .class selectors are used throughout. sass varables and nesting along with 
-   inheritance are documented when used below. */
-
-
-/* Use of sass variables */ 
-$hyper_link_color: black;
-$text_color: rgb(209, 204, 204);
-$table_border_color: black; 
-
 /* SASS Inheritance implementation*/
 %message {
     margin-top: 10px; 
@@ -20,6 +11,13 @@ $table_border_color: black;
     font-family: 'Times New Roman', Times, serif;                                                          
     color: #000000;
 }
+
+/* Home page background picture and formatting info */
+#home {                                                                                                      
+    @extend %message;                                                                                    
+    background-image: url("https://spsy6.files.wordpress.com/2015/09/bookworm.jpg");                              
+    background-size: 1000px 1000px; /*width and height of the background-image */                                                                                     
+}   
 
 .navbar-nav {
     font-weight: bold;
@@ -151,124 +149,4 @@ h1 {
     padding-left: 125px;
     padding-right: 125px;
     font-size: 125%;
-}
-
-/* Home page background picture and formatting info */
-#home {                                                                                                      
-    @extend %message;                                                                                    
-    background-image: url("https://spsy6.files.wordpress.com/2015/09/bookworm.jpg");                              
-    background-size: 1000px 1000px; /*width and height of the background-image */                                                                                     
-}    
-
-/* Using the CSS property @media (mobile-response) to resize the Cameron_pass_map on my 
-retirement page if the screen size width falls below 1200px wide. */
-@media (max-width: 1200px) {
-    #Cameron_pass_map {
-        width: 300px;
-        height: 450px;
-    }
-}
-
-/* Using the CSS property @media to resize the the landscape pictures on my interests page
-if the screen size width falls below 1000px wide. */
-@media (max-width: 1000px) {
-    .interest_picture {
-        width: 300px;
-        height: 200px;
-    }
-}
-
-
-div.retirement_grid {
-    font-size: 150%;
-    text-align: center;
-    font-weight: bold;
-}
-
-/* Do a few custom colors on the the navbar-toggler */
-.navbar-toggler {
-    background-color: rgba(18, 78, 93, 0.233);
-    border: 3px solid black;
-}
-
-div.my_home_grid {
-    font-size: 150%;
-    font-weight: bold;
-    text-align: center;
-} 
-
-/* SASS nesting to format the career table border and cell borders */
-table.table-bordered {
-    thead {
-        tr{
-            border: 3px solid $table_border_color;
-        }
-        th {
-            border: 3px solid $table_border_color;
-        }
-    }
-    tbody {
-        tr {
-            border: 3px solid $table_border_color;
-        }
-        td {
-            border: 3px solid $table_border_color;
-            font-size: 150%; 
-            font-weight: bold;       }
-    }
-}
-/* Additional sass nesting */
-div.interest_grid {
-    img {
-        border-radius: 5px 5px 5px 5px;
-    }
-    h3 {
-        text-align: centered;
-        font-weight: bold;
-        color: black;
-    }
-}
-
-/* Make a square picture round */
-#Sawmill_ski {
-    border-radius: 250px 250px 250px 250px;
-}
-
-div.rving {
-    h2 {
-        font-weight: bold;
-        text-align: center;
-    }
-    img {
-        border-radius: 5px 5px 5px 5px;
-        display: block;
-        margin-left: auto;
-        margin-right: auto;
-            
-    }
-}
-
-a.my_link {
-    color: $hyper_link_color;
-}
-
-/* Change the color of the Navbar links */
-#navbarNavAltMarkup > div > a.nav-item.nav-link.active {
-    color: rgb(218, 100, 32);
-}
-
-#navbarNavAltMarkup > div > a.nav-item.nav-link {
-    color: rgb(218, 32, 88);
-}
-
-@media (min-width: 700px) {
-    .rving h2::before {
-    content: "RVing - Custer South Dakota";
-    }
-}
-
-@media (max-width: 699px) {
-    .rving h2::before {
-    content: "RVing";
-    }
 }

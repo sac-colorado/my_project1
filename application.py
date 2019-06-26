@@ -129,14 +129,19 @@ def submit_review():
     # a user from using the "back arrow" to go back and re-submit their review
     book_data = db.execute("SELECT isbn, reviewer_name FROM book_reviews WHERE isbn=(:book_isbn)",{"book_isbn": book_isbn}).fetchall()
     for review in book_data:
-         if session["username"] == review.reviewer_name:
+        if session["username"] == review.reviewer_name:
             return render_template("output.html", user_message="You have already submitted a review for this book -- only one review per user")
     #db.execute("INSERT INTO test_table (review) VALUES (:review)", {"review": book_review})
-    else:
+    if (review_rating == "1" or review_rating == "2" or review_rating == "3" or review_rating == "4" or review_rating == "5"):
+        review_rating = int(review_rating)
         db.execute("INSERT INTO book_reviews (isbn, reviewer_name, review, rating) VALUES (:isbn, :reviewer_name, :review, :rating)", {"isbn": book_isbn, "reviewer_name": reviewer_name, "review": book_review, "rating": review_rating})
         db.commit()
         return render_template("book_search.html")
-
+    else: 
+        db.execute("INSERT INTO book_reviews (isbn, reviewer_name, review) VALUES (:isbn, :reviewer_name, :review)", {"isbn": book_isbn, "reviewer_name": reviewer_name, "review": book_review})
+        db.commit()
+        return render_template("book_search.html")
+            
 # A route that makes a GET request to the website and returns a JSON response containing book 
  # information.                   
 @app.route("/api/<string:book_isbn>", methods=["GET"])

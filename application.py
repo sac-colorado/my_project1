@@ -104,8 +104,8 @@ def book_page(book_isbn):
         res = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": "1v1ZUGkCBeNqhLjfcFeaA", "isbns": book_isbn})
         reviews_count = res.json()['books'][0]['work_ratings_count']
         average_rating = res.json()['books'][0]['average_rating']
-        book_reviews =db.execute("SELECT review FROM book_reviews WHERE isbn=(:book_isbn)", {"book_isbn": book_isbn}).fetchall()
-        return render_template("book_page.html", book_data=book_data, query_empty=empty, average_rating=average_rating, reviews_count=reviews_count, book_reviews=book_reviews, reviews=True)
+        book_reviews =db.execute("SELECT review, rating FROM book_reviews WHERE isbn=(:book_isbn)", {"book_isbn": book_isbn}).fetchall()
+        return render_template("book_page.html", book_data=book_data, query_empty=empty, average_rating=average_rating, reviews_count=reviews_count, book_reviews=book_reviews)
 
 @app.route("/Write_review/<string:book_isbn>", methods=["GET"])
 def write_review(book_isbn):

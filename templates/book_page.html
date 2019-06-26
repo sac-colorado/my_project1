@@ -66,7 +66,8 @@ if query_empty == True then the query came back with 0 rows. No database entry f
                 </div>
                 <div id ="reviews">
                 {% for review in book_reviews %}
-                    <p> {{ review }} </p>
+                <h5> Rating = {{review.rating}} </h5>
+                    <p> {{ review.review }} </p>
                     <br>
                 {% endfor %}
                 </div>
